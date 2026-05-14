@@ -1,0 +1,11 @@
+=== Model Comparison Results ===
+
+Model                       Accuracy  Precision     Recall         F1
+----------------------------------------------------------------------
+SVM alone                     87.90%     88.04%     87.90%     87.95%
+MobileNetV2 + SVM             95.14%     94.98%     95.14%     95.03%
+----------------------------------------------------------------------
+
+Accuracy improvement : +7.24%
+Feature size SVM alone : 12288 (raw pixels)
+Feature size Hybrid    : 1280 (MobileNetV2 deep features)

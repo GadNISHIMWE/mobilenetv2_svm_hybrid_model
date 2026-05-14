@@ -1,0 +1,14 @@
+=== SVM Evaluation Results ===
+Accuracy  : 93.83%
+Precision : 94.09%
+Recall    : 93.83%
+F1 Score  : 93.95%
+
+              precision    recall  f1-score   support
+
+  large_leaf       0.68      0.74      0.71        23
+  small_leaf       0.97      0.96      0.97       204
+
+    accuracy                           0.94       227
+   macro avg       0.83      0.85      0.84       227
+weighted avg       0.94      0.94      0.94       227

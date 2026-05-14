@@ -1,0 +1,11 @@
+=== Test Image Predictions ===
+
+Image           Predicted Class      Confidence
+--------------------------------------------------
+TEST_001.jpg    large_leaf           99.54%
+TEST_002.jpg    small_leaf           90.37%
+TEST_003.jpg    small_leaf           99.40%
+TEST_004.jpg    small_leaf           54.51%
+TEST_005.jpg    small_leaf           69.29%
+TEST_006.jpg    small_leaf           75.39%
+TEST_007.jpg    large_leaf           90.24%
