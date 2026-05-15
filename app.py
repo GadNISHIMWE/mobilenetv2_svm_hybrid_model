@@ -11,7 +11,9 @@ from io import BytesIO
 
 app = Flask(__name__)
 
-CLASSES  = {0: 'Large Leaf', 1: 'Small Leaf'}
+CLASSES  = {0: 'Leaf', 1: 'Not a Leaf'}
+STATUS   = {0: 'leaf', 1: 'not_leaf'}
+CONFIDENCE_THRESHOLD = 70  # below this → uncertain
 IMG_SIZE = (224, 224)
 
 # ── Load models once at startup ───────────────────────────────────────────────
@@ -59,6 +61,12 @@ def predict():
     probabilities   = svm.predict_proba(features_scaled)[0]
     confidence      = round(float(probabilities[prediction]) * 100, 2)
     class_name      = CLASSES[prediction]
+    status          = STATUS[prediction]
+
+    # Reject uncertain predictions
+    if confidence < CONFIDENCE_THRESHOLD:
+        class_name = 'Uncertain — please upload a clearer image'
+        status     = 'uncertain'
 
     # Convert image to base64 for display
     buffered = BytesIO()
@@ -68,6 +76,7 @@ def predict():
     return jsonify({
         'class'      : class_name,
         'confidence' : confidence,
+        'status'     : status,
         'image_size' : f'{original_size[0]} x {original_size[1]}',
         'features'   : 1280,
         'image_data' : img_base64

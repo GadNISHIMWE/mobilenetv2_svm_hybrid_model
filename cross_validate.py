@@ -1,19 +1,18 @@
 import numpy as np
-import joblib
 from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import StratifiedKFold, cross_validate
 from sklearn.metrics import make_scorer, accuracy_score, precision_score, recall_score, f1_score
 
-# ── Load features and labels ─────────────────────────────────────────────────
-X = np.load('features/train_features.npy')
-y = np.load('features/train_labels.npy')
+# ── Load features and labels from the same combined dataset used by train_svm.py ─────────────────────────────────────────────────
+X = np.load('features/combined_features.npy')
+y = np.load('features/combined_labels.npy')
 
 print('=== K-Fold Cross Validation ===')
 print(f'Total samples  : {X.shape[0]}')
 print(f'Feature size   : {X.shape[1]}')
-print(f'Class 0 (large_leaf): {np.sum(y == 0)}')
-print(f'Class 1 (small_leaf): {np.sum(y == 1)}')
+print(f'Class 0 (leaf)    : {np.sum(y == 0)}')
+print(f'Class 1 (not_leaf): {np.sum(y == 1)}')
 
 # ── Scale features ───────────────────────────────────────────────────────────
 scaler = StandardScaler()
