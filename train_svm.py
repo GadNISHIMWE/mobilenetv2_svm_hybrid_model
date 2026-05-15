@@ -9,15 +9,15 @@ from sklearn.metrics import (accuracy_score, precision_score,
                              confusion_matrix)
 
 # ── Load features and labels ─────────────────────────────────────────────────
-X = np.load('features/train_features.npy')
-y = np.load('features/train_labels.npy')
-filenames = np.load('features/train_filenames.npy')
+X = np.load('features/combined_features.npy')
+y = np.load('features/combined_labels.npy')
+filenames = np.load('features/combined_filenames.npy')
 
 print('=== Data Loaded ===')
 print(f'Features shape : {X.shape}')
 print(f'Labels shape   : {y.shape}')
-print(f'Class 0 (large_leaf): {np.sum(y == 0)}')
-print(f'Class 1 (small_leaf): {np.sum(y == 1)}')
+print(f'Class 0 (leaf)    : {np.sum(y == 0)}')
+print(f'Class 1 (not_leaf): {np.sum(y == 1)}')
 
 # ── Split into train and test sets (80% / 20%) ───────────────────────────────
 X_train, X_test, y_train, y_test = train_test_split(
@@ -55,14 +55,14 @@ print(f'F1 Score  : {f1        * 100:.2f}%')
 
 print('\n=== Classification Report ===')
 print(classification_report(y_test, y_pred,
-      target_names=['large_leaf', 'small_leaf']))
+      target_names=['leaf', 'not_leaf']))
 
 print('=== Confusion Matrix ===')
 cm = confusion_matrix(y_test, y_pred)
 print(f'                 Predicted')
-print(f'                 large  small')
-print(f'Actual large  :  {cm[0][0]:<5}  {cm[0][1]}')
-print(f'Actual small  :  {cm[1][0]:<5}  {cm[1][1]}')
+print(f'                 leaf   not_leaf')
+print(f'Actual leaf    :  {cm[0][0]:<5}  {cm[0][1]}')
+print(f'Actual not_leaf:  {cm[1][0]:<5}  {cm[1][1]}')
 
 # ── Save model and scaler ────────────────────────────────────────────────────
 joblib.dump(svm,    'models/svm_model.pkl')
@@ -78,5 +78,5 @@ with open('results/evaluation.txt', 'w') as f:
     f.write(f'Recall    : {recall    * 100:.2f}%\n')
     f.write(f'F1 Score  : {f1        * 100:.2f}%\n\n')
     f.write(classification_report(y_test, y_pred,
-            target_names=['large_leaf', 'small_leaf']))
+            target_names=['leaf', 'not_leaf']))
 print('Results saved to results/evaluation.txt')
