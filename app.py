@@ -4,8 +4,8 @@ import joblib
 from flask import Flask, request, jsonify, render_template
 from PIL import Image
 import tensorflow as tf
-from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+from mobilenet_utils import load_mobilenetv2
 import base64
 from io import BytesIO
 
@@ -18,8 +18,9 @@ IMG_SIZE = (224, 224)
 
 # ── Load models once at startup ───────────────────────────────────────────────
 print('Loading MobileNetV2 ...')
-mobilenet = MobileNetV2(weights='imagenet', include_top=False,
-                        pooling='avg', input_shape=(224, 224, 3))
+mobilenet = load_mobilenetv2(include_top=False,
+                             pooling='avg',
+                             input_shape=(224, 224, 3))
 mobilenet.trainable = False
 
 print('Loading SVM and scaler ...')

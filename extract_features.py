@@ -2,8 +2,8 @@ import os
 import numpy as np
 from PIL import Image
 import tensorflow as tf
-from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+from mobilenet_utils import load_mobilenetv2
 
 # ── Config ──────────────────────────────────────────────────────────────────
 TRAIN_DIR  = "train"
@@ -13,7 +13,7 @@ FEAT_DIR   = "features"
 # ────────────────────────────────────────────────────────────────────────────
 
 # Load MobileNetV2 without the top classification layer
-model = MobileNetV2(weights="imagenet", include_top=False, pooling="avg", input_shape=(224, 224, 3))
+model = load_mobilenetv2(include_top=False, pooling="avg", input_shape=(224, 224, 3))
 model.trainable = False
 print("MobileNetV2 loaded — output feature size:", model.output_shape)
 

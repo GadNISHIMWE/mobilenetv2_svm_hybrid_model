@@ -3,8 +3,8 @@ import joblib
 import os
 from PIL import Image
 import tensorflow as tf
-from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+from mobilenet_utils import load_mobilenetv2
 
 # ── Config ───────────────────────────────────────────────────────────────────
 TEST_DIR  = os.path.join('test', 'leaf')
@@ -13,8 +13,8 @@ CLASSES   = {0: 'large_leaf', 1: 'small_leaf'}
 
 # ── Load MobileNetV2 feature extractor ───────────────────────────────────────
 print('Loading MobileNetV2 ...')
-mobilenet = MobileNetV2(weights='imagenet', include_top=False,
-                        pooling='avg', input_shape=(224, 224, 3))
+mobilenet = load_mobilenetv2(include_top=False,
+                             pooling='avg', input_shape=(224, 224, 3))
 mobilenet.trainable = False
 
 # ── Load trained SVM and scaler ──────────────────────────────────────────────
