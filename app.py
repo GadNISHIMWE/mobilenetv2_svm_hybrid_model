@@ -2,6 +2,7 @@ import os
 import numpy as np
 import joblib
 from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
 from PIL import Image
 import tensorflow as tf
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
@@ -10,6 +11,7 @@ import base64
 from io import BytesIO
 
 app = Flask(__name__)
+CORS(app)
 
 CLASSES  = {0: 'Leaf', 1: 'Not a Leaf'}
 STATUS   = {0: 'leaf', 1: 'not_leaf'}
@@ -32,6 +34,14 @@ print('Models ready.\n')
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({
+        'status': 'healthy',
+        'message': 'Backend is running'
+    }), 200
 
 
 @app.route('/predict', methods=['POST'])
