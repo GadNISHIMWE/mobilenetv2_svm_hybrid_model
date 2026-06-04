@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "Leaf Classifier",
+    "slug": "leaf-classifier",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "jsEngine": "hermes",
+    "newArchEnabled": false,
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#f4f7f3",
+      "resizeMode": "contain"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Select a leaf image for classification.",
+        "NSCameraUsageDescription": "Capture a leaf image for classification."
+      }
+    },
+    "android": {
+      "package": "com.nigad.leafclassifier",
+      "versionCode": 1,
+      "permissions": [
+        "CAMERA",
+        "READ_MEDIA_IMAGES"
+      ]
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "79bafcd3-f2e7-4015-854d-c740b38900b4"
+      }
+    },
+    "owner": "nigad"
+  }
+}

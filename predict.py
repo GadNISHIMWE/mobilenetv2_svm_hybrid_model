@@ -1,64 +1,70 @@
-import numpy as np
-import joblib
 import os
+
+import joblib
+import numpy as np
 from PIL import Image
-import tensorflow as tf
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+
 from mobilenet_utils import load_mobilenetv2
 
-# ── Config ───────────────────────────────────────────────────────────────────
-TEST_DIR  = os.path.join('test', 'leaf')
-IMG_SIZE  = (224, 224)
-CLASSES   = {0: 'large_leaf', 1: 'small_leaf'}
 
-# ── Load MobileNetV2 feature extractor ───────────────────────────────────────
-print('Loading MobileNetV2 ...')
-mobilenet = load_mobilenetv2(include_top=False,
-                             pooling='avg', input_shape=(224, 224, 3))
-mobilenet.trainable = False
+TEST_DIR = os.path.join("test", "leaf")
+RESULTS_DIR = "results"
+IMG_SIZE = (224, 224)
+CLASSES = {0: "Leaf", 1: "Not a Leaf"}
+VALID_EXTS = (".jpg", ".jpeg", ".png", ".webp")
 
-# ── Load trained SVM and scaler ──────────────────────────────────────────────
-print('Loading SVM model and scaler ...')
-svm    = joblib.load('models/svm_model.pkl')
-scaler = joblib.load('models/scaler.pkl')
 
-# ── Predict ──────────────────────────────────────────────────────────────────
-print('\n=== Predictions on Test Images ===')
-print(f'{"Image":<15} {"Predicted Class":<20} {"Confidence"}')
-print('-' * 50)
+def main():
+    os.makedirs(RESULTS_DIR, exist_ok=True)
 
-test_images = sorted([f for f in os.listdir(TEST_DIR) if f.lower().endswith('.jpg')])
-results = []
+    print("Loading MobileNetV2 ...")
+    mobilenet = load_mobilenetv2(include_top=False, pooling="avg", input_shape=(224, 224, 3))
+    mobilenet.trainable = False
 
-for fname in test_images:
-    # Step 1 - Load and preprocess image
-    img = Image.open(os.path.join(TEST_DIR, fname)).convert('RGB')
-    img = img.resize(IMG_SIZE)
-    arr = np.array(img, dtype=np.float32)
-    arr = preprocess_input(arr)
-    arr = np.expand_dims(arr, axis=0)
+    print("Loading SVM model and scaler ...")
+    svm = joblib.load(os.path.join("models", "svm_model.pkl"))
+    scaler = joblib.load(os.path.join("models", "scaler.pkl"))
 
-    # Step 2 - Extract features with MobileNetV2
-    features = mobilenet.predict(arr, verbose=0)
+    print("\n=== Predictions on Test Images ===")
+    print(f'{"Image":<20} {"Predicted Class":<20} {"Confidence"}')
+    print("-" * 60)
 
-    # Step 3 - Scale features
-    features_scaled = scaler.transform(features)
+    test_images = sorted(
+        f for f in os.listdir(TEST_DIR) if f.lower().endswith(VALID_EXTS)
+    )
+    results = []
 
-    # Step 4 - SVM prediction
-    prediction   = svm.predict(features_scaled)[0]
-    probabilities = svm.predict_proba(features_scaled)[0]
-    confidence   = probabilities[prediction] * 100
-    class_name   = CLASSES[prediction]
+    for fname in test_images:
+        image_path = os.path.join(TEST_DIR, fname)
+        with Image.open(image_path) as img:
+            img = img.convert("RGB").resize(IMG_SIZE)
+            arr = np.array(img, dtype=np.float32)
 
-    print(f'{fname:<15} {class_name:<20} {confidence:.2f}%')
-    results.append((fname, class_name, confidence))
+        arr = preprocess_input(arr)
+        arr = np.expand_dims(arr, axis=0)
 
-# ── Save results ─────────────────────────────────────────────────────────────
-with open('results/predictions.txt', 'w') as f:
-    f.write('=== Test Image Predictions ===\n\n')
-    f.write(f'{"Image":<15} {"Predicted Class":<20} {"Confidence"}\n')
-    f.write('-' * 50 + '\n')
-    for fname, class_name, confidence in results:
-        f.write(f'{fname:<15} {class_name:<20} {confidence:.2f}%\n')
+        features = mobilenet.predict(arr, verbose=0)
+        features_scaled = scaler.transform(features)
 
-print('\nPredictions saved to results/predictions.txt')
+        prediction = svm.predict(features_scaled)[0]
+        probabilities = svm.predict_proba(features_scaled)[0]
+        confidence = probabilities[prediction] * 100
+        class_name = CLASSES[prediction]
+
+        print(f"{fname:<20} {class_name:<20} {confidence:.2f}%")
+        results.append((fname, class_name, confidence))
+
+    output_path = os.path.join(RESULTS_DIR, "predictions.txt")
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write("=== Test Image Predictions ===\n\n")
+        f.write(f'{"Image":<20} {"Predicted Class":<20} {"Confidence"}\n')
+        f.write("-" * 60 + "\n")
+        for fname, class_name, confidence in results:
+            f.write(f"{fname:<20} {class_name:<20} {confidence:.2f}%\n")
+
+    print(f"\nPredictions saved to {output_path}")
+
+
+if __name__ == "__main__":
+    main()

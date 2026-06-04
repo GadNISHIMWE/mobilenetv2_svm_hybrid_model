@@ -1,0 +1,11 @@
+venv/
+__pycache__/
+*.py[cod]
+
+.env
+.venv/
+
+*.log
+mobile/node_modules/
+mobile/.expo/
+.android-build-tools/

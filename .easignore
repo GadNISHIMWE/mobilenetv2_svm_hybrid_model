@@ -1,0 +1,6 @@
+# Ignore large unnecessary files and directories causing casing issues
+.android-build-tools/
+android/
+*.zip
+*.aar
+*.jar

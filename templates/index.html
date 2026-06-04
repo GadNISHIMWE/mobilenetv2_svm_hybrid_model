@@ -8,7 +8,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: "Segoe UI", sans-serif;
             background: #f0f4f8;
             min-height: 100vh;
             display: flex;
@@ -23,17 +23,17 @@
 
         .card {
             background: white;
-            border-radius: 16px;
+            border-radius: 8px;
             padding: 30px;
             width: 100%;
             max-width: 600px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             margin-bottom: 20px;
         }
 
         .upload-area {
             border: 2px dashed #95d5b2;
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 40px;
             text-align: center;
             cursor: pointer;
@@ -48,7 +48,7 @@
             align-items: center;
             gap: 10px;
         }
-        .upload-icon { font-size: 48px; }
+        .upload-icon { font-size: 40px; }
         .upload-area p { color: #555; font-size: 14px; }
 
         .btn {
@@ -63,7 +63,7 @@
             margin-top: 16px;
             transition: background 0.2s;
         }
-        .btn:hover    { background: #1b4332; }
+        .btn:hover { background: #1b4332; }
         .btn:disabled { background: #aaa; cursor: not-allowed; }
 
         #preview-section { display: none; }
@@ -71,7 +71,7 @@
             width: 100%;
             max-height: 300px;
             object-fit: contain;
-            border-radius: 10px;
+            border-radius: 8px;
             border: 1px solid #e0e0e0;
         }
 
@@ -88,23 +88,22 @@
             transition: all 0.3s;
         }
         .step.active { background: #d8f3dc; color: #1b4332; font-weight: 600; }
-        .step.done   { background: #d8f3dc; color: #2d6a4f; }
-        .step-icon   { font-size: 18px; width: 24px; text-align: center; }
+        .step.done { background: #d8f3dc; color: #2d6a4f; }
+        .step-icon { width: 24px; text-align: center; font-weight: 700; }
 
         #result-section { display: none; }
-
         .result-box {
             text-align: center;
             padding: 20px;
-            border-radius: 12px;
+            border-radius: 8px;
             margin-bottom: 16px;
             transition: background 0.3s;
         }
-        .result-box.leaf      { background: #d8f3dc; }
-        .result-box.not-leaf  { background: #ffe0e0; }
+        .result-box.leaf { background: #d8f3dc; }
+        .result-box.not-leaf { background: #ffe0e0; }
         .result-box.uncertain { background: #fff3cd; }
 
-        .result-class      { font-size: 28px; font-weight: 700; color: #1b4332; }
+        .result-class { font-size: 28px; font-weight: 700; color: #1b4332; }
         .result-confidence { font-size: 16px; color: #2d6a4f; margin-top: 4px; }
 
         .confidence-bar-wrap {
@@ -120,8 +119,8 @@
             transition: width 1s ease;
             width: 0%;
         }
-        .leaf      .confidence-bar { background: #2d6a4f; }
-        .not-leaf  .confidence-bar { background: #c0392b; }
+        .leaf .confidence-bar { background: #2d6a4f; }
+        .not-leaf .confidence-bar { background: #c0392b; }
         .uncertain .confidence-bar { background: #f39c12; }
 
         .meta-info {
@@ -130,6 +129,7 @@
             margin-top: 16px;
             font-size: 13px;
             color: #555;
+            gap: 12px;
         }
         .meta-item { text-align: center; }
         .meta-item span { display: block; font-weight: 600; color: #2d6a4f; font-size: 15px; }
@@ -150,54 +150,49 @@
 <body>
 
 <header>
-    <h1>🌿 Leaf Image Classifier</h1>
+    <h1>Leaf Image Classifier</h1>
     <p>MobileNetV2 Transfer Learning + SVM Classification</p>
 </header>
 
-<!-- Upload Card -->
 <div class="card">
     <div class="upload-area" onclick="document.getElementById('file-input').click()">
         <label>
-            <span class="upload-icon">📁</span>
+            <span class="upload-icon">+</span>
             <strong>Click to upload an image</strong>
-            <p>Supports JPG, PNG</p>
+            <p>Supports JPG and PNG</p>
         </label>
         <input type="file" id="file-input" accept="image/*" onchange="onFileSelected(event)">
     </div>
     <div id="error-box" class="error-box"></div>
-    <button class="btn" id="predict-btn" onclick="predict()" disabled>
-        🔍 Classify Image
-    </button>
+    <button class="btn" id="predict-btn" onclick="predict()" disabled>Classify Image</button>
 </div>
 
-<!-- Preview Card -->
 <div class="card" id="preview-section">
-    <h3 style="margin-bottom:12px; color:#2d6a4f;">📷 Selected Image</h3>
+    <h3 style="margin-bottom:12px; color:#2d6a4f;">Selected Image</h3>
     <img id="preview-img" src="" alt="preview">
     <div class="pipeline" id="pipeline">
-        <div class="step" id="step1"><span class="step-icon">🖼️</span> Step 1 — Input Image</div>
-        <div class="step" id="step2"><span class="step-icon">⚙️</span> Step 2 — Image Preprocessing (resize to 224×224)</div>
-        <div class="step" id="step3"><span class="step-icon">🧠</span> Step 3 — MobileNetV2 Feature Extraction</div>
-        <div class="step" id="step4"><span class="step-icon">📊</span> Step 4 — Deep Feature Vector (1280 dimensions)</div>
-        <div class="step" id="step5"><span class="step-icon">🎯</span> Step 5 — SVM Classification</div>
-        <div class="step" id="step6"><span class="step-icon">✅</span> Step 6 — Final Prediction</div>
+        <div class="step" id="step1"><span class="step-icon">1</span> Input Image</div>
+        <div class="step" id="step2"><span class="step-icon">2</span> Image Preprocessing (resize to 224 x 224)</div>
+        <div class="step" id="step3"><span class="step-icon">3</span> MobileNetV2 Feature Extraction</div>
+        <div class="step" id="step4"><span class="step-icon">4</span> Deep Feature Vector (1280 dimensions)</div>
+        <div class="step" id="step5"><span class="step-icon">5</span> SVM Classification</div>
+        <div class="step" id="step6"><span class="step-icon">6</span> Final Prediction</div>
     </div>
-    <div class="loading" id="loading">⏳ Processing ...</div>
+    <div class="loading" id="loading">Processing ...</div>
 </div>
 
-<!-- Result Card -->
 <div class="card" id="result-section">
-    <h3 style="margin-bottom:12px; color:#2d6a4f;">🎯 Classification Result</h3>
+    <h3 style="margin-bottom:12px; color:#2d6a4f;">Classification Result</h3>
     <div class="result-box" id="result-box">
-        <div class="result-class" id="result-class">—</div>
-        <div class="result-confidence" id="result-confidence">Confidence: —</div>
+        <div class="result-class" id="result-class">-</div>
+        <div class="result-confidence" id="result-confidence">Confidence: -</div>
         <div class="confidence-bar-wrap">
             <div class="confidence-bar" id="confidence-bar"></div>
         </div>
     </div>
     <div class="meta-info">
-        <div class="meta-item">Image Size<span id="meta-size">—</span></div>
-        <div class="meta-item">Features Extracted<span id="meta-features">—</span></div>
+        <div class="meta-item">Image Size<span id="meta-size">-</span></div>
+        <div class="meta-item">Features Extracted<span id="meta-features">-</span></div>
         <div class="meta-item">Classifier<span>SVM (RBF)</span></div>
     </div>
 </div>
@@ -210,27 +205,29 @@
         if (!selectedFile) return;
         const reader = new FileReader();
         reader.onload = e => {
-            document.getElementById('preview-img').src = e.target.result;
-            document.getElementById('preview-section').style.display = 'block';
-            document.getElementById('result-section').style.display = 'none';
+            document.getElementById("preview-img").src = e.target.result;
+            document.getElementById("preview-section").style.display = "block";
+            document.getElementById("result-section").style.display = "none";
             resetSteps();
         };
         reader.readAsDataURL(selectedFile);
-        document.getElementById('predict-btn').disabled = false;
-        document.getElementById('error-box').style.display = 'none';
+        document.getElementById("predict-btn").disabled = false;
+        document.getElementById("error-box").style.display = "none";
     }
 
     function resetSteps() {
-        for (let i = 1; i <= 6; i++)
-            document.getElementById('step' + i).className = 'step';
+        for (let i = 1; i <= 6; i++) {
+            document.getElementById("step" + i).className = "step";
+        }
+        document.getElementById("confidence-bar").style.width = "0%";
     }
 
     async function activateStep(stepId, delay) {
         return new Promise(resolve => {
             setTimeout(() => {
-                document.getElementById(stepId).className = 'step active';
+                document.getElementById(stepId).className = "step active";
                 setTimeout(() => {
-                    document.getElementById(stepId).className = 'step done';
+                    document.getElementById(stepId).className = "step done";
                     resolve();
                 }, 500);
             }, delay);
@@ -239,58 +236,59 @@
 
     async function predict() {
         if (!selectedFile) return;
-        document.getElementById('predict-btn').disabled = true;
-        document.getElementById('loading').style.display = 'block';
-        document.getElementById('result-section').style.display = 'none';
-        document.getElementById('error-box').style.display = 'none';
+        document.getElementById("predict-btn").disabled = true;
+        document.getElementById("loading").style.display = "block";
+        document.getElementById("result-section").style.display = "none";
+        document.getElementById("error-box").style.display = "none";
         resetSteps();
 
-        await activateStep('step1', 0);
-        await activateStep('step2', 300);
-        await activateStep('step3', 600);
+        await activateStep("step1", 0);
+        await activateStep("step2", 300);
+        await activateStep("step3", 600);
 
         const formData = new FormData();
-        formData.append('image', selectedFile);
+        formData.append("image", selectedFile);
 
         try {
-            const response = await fetch('/predict', { method: 'POST', body: formData });
+            const response = await fetch("/predict", { method: "POST", body: formData });
             const data = await response.json();
 
-            if (data.error) { showError(data.error); return; }
+            if (data.error) {
+                showError(data.error);
+                return;
+            }
 
-            await activateStep('step4', 0);
-            await activateStep('step5', 300);
-            await activateStep('step6', 600);
+            await activateStep("step4", 0);
+            await activateStep("step5", 300);
+            await activateStep("step6", 600);
 
             setTimeout(() => {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('result-section').style.display = 'block';
-                document.getElementById('result-class').textContent = data.class;
-                document.getElementById('result-confidence').textContent = `Confidence: ${data.confidence}%`;
-                document.getElementById('meta-size').textContent = data.image_size;
-                document.getElementById('meta-features').textContent = data.features;
+                document.getElementById("loading").style.display = "none";
+                document.getElementById("result-section").style.display = "block";
+                document.getElementById("result-class").textContent = data.class;
+                document.getElementById("result-confidence").textContent = `Confidence: ${data.confidence}%`;
+                document.getElementById("meta-size").textContent = data.image_size;
+                document.getElementById("meta-features").textContent = data.features;
 
-                // Apply color based on status
-                const box = document.getElementById('result-box');
-                box.className = 'result-box ' + data.status.replace('_', '-');
+                const box = document.getElementById("result-box");
+                box.className = "result-box " + data.status.replace("_", "-");
 
                 setTimeout(() => {
-                    document.getElementById('confidence-bar').style.width = data.confidence + '%';
+                    document.getElementById("confidence-bar").style.width = data.confidence + "%";
                 }, 100);
 
-                document.getElementById('predict-btn').disabled = false;
+                document.getElementById("predict-btn").disabled = false;
             }, 1000);
-
         } catch (err) {
-            showError('Something went wrong. Make sure the server is running.');
+            showError("Something went wrong. Make sure the server is running.");
         }
     }
 
     function showError(msg) {
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('error-box').style.display = 'block';
-        document.getElementById('error-box').textContent = '⚠️ ' + msg;
-        document.getElementById('predict-btn').disabled = false;
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("error-box").style.display = "block";
+        document.getElementById("error-box").textContent = "Warning: " + msg;
+        document.getElementById("predict-btn").disabled = false;
     }
 </script>
 

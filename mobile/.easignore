@@ -1,0 +1,6 @@
+# Ignore large unnecessary files
+.android-build-tools/
+android/
+*.zip
+*.aar
+*.jar
