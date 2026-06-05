@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MobileNet-SVM Hybrid Model</title>
+    <title>Tea Leaf Disease Classifier</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -27,7 +27,7 @@
             padding: 30px;
             width: 100%;
             max-width: 600px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             margin-bottom: 20px;
         }
 
@@ -88,8 +88,8 @@
             transition: all 0.3s;
         }
         .step.active { background: #d8f3dc; color: #1b4332; font-weight: 600; }
-        .step.done { background: #d8f3dc; color: #2d6a4f; }
-        .step-icon { width: 24px; text-align: center; font-weight: 700; }
+        .step.done   { background: #d8f3dc; color: #2d6a4f; }
+        .step-icon   { width: 24px; text-align: center; font-weight: 700; }
 
         #result-section { display: none; }
         .result-box {
@@ -97,14 +97,13 @@
             padding: 20px;
             border-radius: 8px;
             margin-bottom: 16px;
-            transition: background 0.3s;
         }
-        .result-box.leaf { background: #d8f3dc; }
-        .result-box.not-leaf { background: #ffe0e0; }
+        .result-box.healthy   { background: #d8f3dc; }
+        .result-box.diseased  { background: #ffe0e0; }
         .result-box.uncertain { background: #fff3cd; }
 
-        .result-class { font-size: 28px; font-weight: 700; color: #1b4332; }
-        .result-confidence { font-size: 16px; color: #2d6a4f; margin-top: 4px; }
+        .result-class      { font-size: 26px; font-weight: 700; color: #1b4332; }
+        .result-confidence { font-size: 15px; color: #2d6a4f; margin-top: 4px; }
 
         .confidence-bar-wrap {
             background: #e0e0e0;
@@ -113,14 +112,9 @@
             margin-top: 12px;
             overflow: hidden;
         }
-        .confidence-bar {
-            height: 100%;
-            border-radius: 20px;
-            transition: width 1s ease;
-            width: 0%;
-        }
-        .leaf .confidence-bar { background: #2d6a4f; }
-        .not-leaf .confidence-bar { background: #c0392b; }
+        .confidence-bar { height: 100%; border-radius: 20px; transition: width 1s ease; width: 0%; }
+        .healthy   .confidence-bar { background: #2d6a4f; }
+        .diseased  .confidence-bar { background: #c0392b; }
         .uncertain .confidence-bar { background: #f39c12; }
 
         .meta-info {
@@ -129,13 +123,11 @@
             margin-top: 16px;
             font-size: 13px;
             color: #555;
-            gap: 12px;
         }
         .meta-item { text-align: center; }
         .meta-item span { display: block; font-weight: 600; color: #2d6a4f; font-size: 15px; }
 
         .loading { display: none; text-align: center; color: #2d6a4f; padding: 10px; }
-
         .error-box {
             background: #ffe0e0;
             color: #c0392b;
@@ -145,26 +137,56 @@
             display: none;
             margin-top: 10px;
         }
+
+        .classes-info {
+            font-size: 13px;
+            color: #555;
+            margin-top: 16px;
+            padding: 12px;
+            background: #f8f8f8;
+            border-radius: 8px;
+        }
+        .classes-info strong { color: #2d6a4f; display: block; margin-bottom: 6px; }
+        .class-tag {
+            display: inline-block;
+            background: #d8f3dc;
+            color: #1b4332;
+            border-radius: 20px;
+            padding: 3px 10px;
+            margin: 3px;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Leaf Image Classifier</h1>
-    <p>MobileNetV2 Transfer Learning + SVM Classification</p>
+    <h1>🍃 Tea Leaf Disease Classifier</h1>
+    <p>MobileNetV2 Feature Extraction + SVM Classification</p>
 </header>
 
 <div class="card">
     <div class="upload-area" onclick="document.getElementById('file-input').click()">
         <label>
-            <span class="upload-icon">+</span>
-            <strong>Click to upload an image</strong>
+            <span class="upload-icon">📷</span>
+            <strong>Click to upload a leaf image</strong>
             <p>Supports JPG and PNG</p>
         </label>
         <input type="file" id="file-input" accept="image/*" onchange="onFileSelected(event)">
     </div>
     <div id="error-box" class="error-box"></div>
-    <button class="btn" id="predict-btn" onclick="predict()" disabled>Classify Image</button>
+    <button class="btn" id="predict-btn" onclick="predict()" disabled>Classify Leaf</button>
+
+    <div class="classes-info">
+        <strong>Detectable Classes:</strong>
+        <span class="class-tag">Tea Algal Leaf Spot</span>
+        <span class="class-tag">Brown Blight</span>
+        <span class="class-tag">Gray Blight</span>
+        <span class="class-tag">Helopeltis</span>
+        <span class="class-tag">Red Spider</span>
+        <span class="class-tag">Green Mirid Bug</span>
+        <span class="class-tag" style="background:#b7e4c7;">Healthy Leaf</span>
+    </div>
 </div>
 
 <div class="card" id="preview-section">
@@ -172,7 +194,7 @@
     <img id="preview-img" src="" alt="preview">
     <div class="pipeline" id="pipeline">
         <div class="step" id="step1"><span class="step-icon">1</span> Input Image</div>
-        <div class="step" id="step2"><span class="step-icon">2</span> Image Preprocessing (resize to 224 x 224)</div>
+        <div class="step" id="step2"><span class="step-icon">2</span> Image Preprocessing (resize to 224×224)</div>
         <div class="step" id="step3"><span class="step-icon">3</span> MobileNetV2 Feature Extraction</div>
         <div class="step" id="step4"><span class="step-icon">4</span> Deep Feature Vector (1280 dimensions)</div>
         <div class="step" id="step5"><span class="step-icon">5</span> SVM Classification</div>
@@ -192,7 +214,7 @@
     </div>
     <div class="meta-info">
         <div class="meta-item">Image Size<span id="meta-size">-</span></div>
-        <div class="meta-item">Features Extracted<span id="meta-features">-</span></div>
+        <div class="meta-item">Features<span id="meta-features">-</span></div>
         <div class="meta-item">Classifier<span>SVM (RBF)</span></div>
     </div>
 </div>
@@ -216,9 +238,8 @@
     }
 
     function resetSteps() {
-        for (let i = 1; i <= 6; i++) {
+        for (let i = 1; i <= 6; i++)
             document.getElementById("step" + i).className = "step";
-        }
         document.getElementById("confidence-bar").style.width = "0%";
     }
 
@@ -253,10 +274,7 @@
             const response = await fetch("/predict", { method: "POST", body: formData });
             const data = await response.json();
 
-            if (data.error) {
-                showError(data.error);
-                return;
-            }
+            if (data.error) { showError(data.error); return; }
 
             await activateStep("step4", 0);
             await activateStep("step5", 300);
@@ -270,9 +288,7 @@
                 document.getElementById("meta-size").textContent = data.image_size;
                 document.getElementById("meta-features").textContent = data.features;
 
-                const box = document.getElementById("result-box");
-                box.className = "result-box " + data.status.replace("_", "-");
-
+                document.getElementById("result-box").className = "result-box " + data.status;
                 setTimeout(() => {
                     document.getElementById("confidence-bar").style.width = data.confidence + "%";
                 }, 100);
@@ -287,7 +303,7 @@
     function showError(msg) {
         document.getElementById("loading").style.display = "none";
         document.getElementById("error-box").style.display = "block";
-        document.getElementById("error-box").textContent = "Warning: " + msg;
+        document.getElementById("error-box").textContent = "⚠ " + msg;
         document.getElementById("predict-btn").disabled = false;
     }
 </script>

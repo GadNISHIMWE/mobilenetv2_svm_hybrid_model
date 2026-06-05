@@ -4,15 +4,19 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import StratifiedKFold, cross_validate
 from sklearn.metrics import make_scorer, accuracy_score, precision_score, recall_score, f1_score
 
-# ── Load features and labels from the same combined dataset used by train_svm.py ─────────────────────────────────────────────────
-X = np.load('features/combined_features.npy')
-y = np.load('features/combined_labels.npy')
+CLASS_NAMES = [
+    "Tea Algal Leaf Spot", "Brown Blight", "Gray Blight",
+    "Helopeltis", "Red Spider", "Green Mirid Bug", "Healthy Leaf",
+]
+
+X = np.load('features/features.npy')
+y = np.load('features/labels.npy')
 
 print('=== K-Fold Cross Validation ===')
-print(f'Total samples  : {X.shape[0]}')
-print(f'Feature size   : {X.shape[1]}')
-print(f'Class 0 (leaf)    : {np.sum(y == 0)}')
-print(f'Class 1 (not_leaf): {np.sum(y == 1)}')
+print(f'Total samples : {X.shape[0]}')
+print(f'Feature size  : {X.shape[1]}')
+for i, name in enumerate(CLASS_NAMES):
+    print(f'  [{i}] {name}: {np.sum(y == i)}')
 
 # ── Scale features ───────────────────────────────────────────────────────────
 scaler = StandardScaler()
